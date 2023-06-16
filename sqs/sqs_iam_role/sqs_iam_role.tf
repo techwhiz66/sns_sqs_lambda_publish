@@ -6,6 +6,9 @@ variable "queue_arn" {
   description = "ARN of the SQS queue"
 }
 
+variable "sns_topic_arn" {
+  description = "ARN  of the SNS Topic "
+}
 
 resource "aws_iam_role" "sqs_role" {
  name   = "Role_Test_AWS_SQS_STSAssume"
@@ -26,9 +29,7 @@ resource "aws_iam_role" "sqs_role" {
 EOF
 }
 
-# IAM policy for logging from a lambda
-
-
+# Create SQS Resource Policy to allow SNS To Send MEssage to SQS Queue 
 resource "aws_sqs_queue_policy" "iam_policy_for_sqs" {
   queue_url = "${var.queue_url}"
   policy = <<EOF
@@ -36,14 +37,16 @@ resource "aws_sqs_queue_policy" "iam_policy_for_sqs" {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "AllowSNSToSQS",
+      "Sid": "AllowSNSToSendMessageToSQS",
       "Effect": "Allow",
       "Principal": "*",
-      "Action": "sqs:SendMessage",
+      "Action": ["sqs:SendMessage",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes"],
        "Resource": "${var.queue_arn}",
       "Condition": {
         "ArnEquals": {
-          "aws:SourceArn": "${var.queue_url}"
+          "aws:SourceArn": "${var.sns_topic_arn}"
         }
       }
     }

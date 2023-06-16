@@ -5,6 +5,10 @@ provider "aws" {
   region = var.aws_region
 }
 
+########################################
+## Maintain state in AWS S3 Bucket ##
+########################################
+
 terraform {
   backend "s3" {
     encrypt         = true

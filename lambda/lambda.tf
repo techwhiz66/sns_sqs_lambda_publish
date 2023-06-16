@@ -2,6 +2,13 @@ variable "aws_lambda_name" {
   type = string
 }
 
+variable "main_tags" {
+  type = map(string)
+}
+
+
+
+# Create AWS IAM Role to assume Lambda
 resource "aws_iam_role" "lambda_role" {
  name   = "terraform_aws_lambda_role"
  assume_role_policy = <<EOF
@@ -60,7 +67,8 @@ resource "aws_iam_policy" "iam_policy_for_receive_sqs_msg" {
       "Action": [
         "sqs:ReceiveMessage",
         "sqs:DeleteMessage",
-        "sqs:GetQueueAttributes"
+        "sqs:GetQueueAttributes",
+        "sqs:ChangeMessageVisibility"
       ],
       "Resource": "*",
       "Effect": "Allow"
@@ -104,8 +112,17 @@ resource "aws_lambda_function" "terraform_lambda_func" {
  handler                        = "lambda_function.lambda_handler"
  runtime                        = "python3.8"
  depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
+
+   tags = merge(
+    var.main_tags,
+    {
+      "component" = "aws_lambda_fn"
+    }
+  )
+
 }
 
+# Create AWS Cloudwatch Log Group 
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
   name              = "/aws/lambda/${var.aws_lambda_name}"
   retention_in_days = 30

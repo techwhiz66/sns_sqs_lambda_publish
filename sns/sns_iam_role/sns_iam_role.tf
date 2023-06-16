@@ -11,24 +11,25 @@ variable "queue_url" {
 }
 
 
-resource "aws_sqs_queue_policy" "sns_to_sqs_policy" {
-  #arn = "${var.sns_topic_arn}"
-  queue_url = var.queue_url
+# Create SNS Topic Policy to allow SNS To publish to SQS Queue 
+resource "aws_sns_topic_policy" "sns_to_sqs_policy" {
+  arn = var.sns_topic_arn
+  #queue_url = var.queue_url
   policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "AllowSQSPublish",
+      "Sid": "AllowSNSToPublishToSQS",
       "Effect": "Allow",
       "Principal": {
         "Service": "sns.amazonaws.com"
       },
-      "Action": "sqs:SendMessage",
-       "Resource": "${var.queue_arn}",
+      "Action": "sns:Publish",
+       "Resource": "${var.sns_topic_arn}",
       "Condition": {
         "ArnEquals": {
-          "aws:SourceArn": "${var.sns_topic_arn}"
+          "aws:SourceArn": "${var.queue_arn}"
         }
       }
     }
