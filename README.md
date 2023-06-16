@@ -1,3 +1,29 @@
+# Pre-requisites 
+
+- Make sure S3 Bucket exists to store the terraform state and update provider.tf file 
+- Currently the code is implemented using AWS Credentials set locally/profile  
+	- aws configure --profile default
+	 			-- # Set the AWS Access Key & Secret Key 
+- Make sure that the user used to execute the cide should  have the below permissions:
+	- AllowSNS 
+		- "sns:CreateTopic",
+        - "sns:GetTopicAttributes",
+        - "sns:SetTopicAttributes",
+        - "sns:Subscribe",
+        - "sns:Publish"
+	- Allow SQS 
+		- "sqs:CreateQueue",
+        - "sqs:GetQueueAttributes",
+        - "sqs:SetQueueAttributes"
+	- Allow Lambda
+		- "lambda:CreateFunction",
+        - "lambda:GetFunction",
+        - "lambda:UpdateFunctionCode",
+        - "lambda:UpdateFunctionConfiguration",
+        - "lambda:InvokeFunction"
+	- Allow S3 
+		- "s3:PutObject"
+
 # Usage
 
 - Clone the Repository to your local machine 
