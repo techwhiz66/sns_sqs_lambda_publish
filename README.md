@@ -4,7 +4,7 @@
 - Currently the code is implemented using AWS Credentials set locally/profile  
 	- aws configure --profile default
 	 			-- # Set the AWS Access Key & Secret Key 
-- Make sure that the user used to execute the cide should  have the below permissions:
+- Make sure that the user used to execute the cicd should  have the below permissions:
 	- AllowSNS 
 		- "sns:CreateTopic",
         - "sns:GetTopicAttributes",
